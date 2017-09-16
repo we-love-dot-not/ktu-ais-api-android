@@ -1,6 +1,6 @@
 package welovedotnot.lt.ktu_ais_api
 
-import welovedotnot.lt.ktu_ais_api.api.LoginHandler
+import welovedotnot.lt.ktu_ais_api.handlers.LoginHandler
 import welovedotnot.lt.ktu_ais_api.models.LoginModel
 
 /**

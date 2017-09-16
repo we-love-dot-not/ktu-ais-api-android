@@ -1,4 +1,4 @@
-package welovedotnot.lt.ktu_ais_api.api
+package welovedotnot.lt.ktu_ais_api.handlers
 
 /**
  * Created by simonas on 9/3/17.

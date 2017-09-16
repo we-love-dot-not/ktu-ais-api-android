@@ -1,4 +1,4 @@
-package welovedotnot.lt.ktu_ais_api.api
+package welovedotnot.lt.ktu_ais_api.handlers
 
 import org.jsoup.Connection
 import org.jsoup.Jsoup

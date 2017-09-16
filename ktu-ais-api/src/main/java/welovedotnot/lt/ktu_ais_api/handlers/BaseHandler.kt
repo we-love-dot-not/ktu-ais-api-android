@@ -1,4 +1,6 @@
-package welovedotnot.lt.ktu_ais_api.api
+package welovedotnot.lt.ktu_ais_api.handlers
+
+import welovedotnot.lt.ktu_ais_api.api.RetroClient
 
 /**
  * Created by simonas on 9/3/17.
