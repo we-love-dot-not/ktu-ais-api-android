@@ -8,5 +8,5 @@ data class LoginModel(
         val studCookie: String,
         val studentName: String,
         val studentId: String,
-        val studentSemesters: List<SemesterModel>
+        val studentSemesters: List<YearModel>
 )

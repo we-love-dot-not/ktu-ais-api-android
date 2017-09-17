@@ -3,7 +3,7 @@ package welovedotnot.lt.ktu_ais_api.handlers
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import welovedotnot.lt.ktu_ais_api.models.LoginModel
-import welovedotnot.lt.ktu_ais_api.models.SemesterModel
+import welovedotnot.lt.ktu_ais_api.models.YearModel
 
 /**
  * Created by simonas on 9/3/17.
@@ -11,13 +11,16 @@ import welovedotnot.lt.ktu_ais_api.models.SemesterModel
 
 class LoginHandler: BaseHandler() {
 
-    fun getAuthCookies(username: String, password: String, callback: (LoginModel) -> Unit) {
+    fun getAuthCookies(username: String, password: String): LoginModel? {
         val autoLogin = getAutoLogin()
         val postLogin = postLogin(username, password, autoLogin)
-        val agreeLogin = getAgree(postLogin)
-        val postContinue = postContinue(agreeLogin)
-        val loginResponse = getInfo(postContinue)
-        callback.invoke(loginResponse)
+        if (postLogin != null) {
+            val agreeLogin = getAgree(postLogin)
+            val postContinue = postContinue(agreeLogin)
+            val loginResponse = getInfo(postContinue)
+            return loginResponse
+        }
+        return null
     }
 
     private class AutoLoginResponse(
@@ -52,7 +55,7 @@ class LoginHandler: BaseHandler() {
     private fun postLogin(
             username: String,
             password: String,
-            autoLoginResponse: AutoLoginResponse): PostLoginResponse {
+            autoLoginResponse: AutoLoginResponse): PostLoginResponse? {
 
         val url = "https://login.ktu.lt/simplesaml/module.php/core/loginuserpass.php"
         val request = Jsoup.connect(url)
@@ -65,9 +68,13 @@ class LoginHandler: BaseHandler() {
                 .method(Connection.Method.POST)
                 .execute()
         val parse = request.parse()
-        val filteredInputList = parse.select("input").first { it.attr("name") == "StateId" }
-        val stateId = filteredInputList.attr("value")
-        return PostLoginResponse(stateId, request.cookies() + autoLoginResponse.cookies)
+        val inputList = parse.select("input")
+        val filteredInputList = inputList.firstOrNull { it.attr("name") == "StateId" }
+        if (filteredInputList != null) {
+            val stateId = filteredInputList.attr("value")
+            return PostLoginResponse(stateId, request.cookies() + autoLoginResponse.cookies)
+        }
+        return null
     }
 
     private fun getAgree(postLoginResponse: PostLoginResponse): AgreeResponse {
@@ -112,7 +119,7 @@ class LoginHandler: BaseHandler() {
         val nameItemText = parse.select("#ais_lang_link_lt").parents().first().text()
         val studentId = nameItemText.split(' ')[0].trim()
         val studentName = nameItemText.split(' ')[1].trim()
-        val studyList = mutableListOf<SemesterModel>().apply {
+        val studyList = mutableListOf<YearModel>().apply {
             val studyYears = parse.select(".ind-lst.unstyled > li > a")
             val yearRegex = "plano_metai=([0-9]+)".toRegex()
             val idRegex = "p_stud_id=([0-9]+)".toRegex()
@@ -120,7 +127,7 @@ class LoginHandler: BaseHandler() {
                 val link = yearHtml.attr("href")
                 val id = idRegex.find(link)!!.groups[1]!!.value
                 val year = yearRegex.find(link)!!.groups[1]!!.value
-                add(SemesterModel(id, year))
+                add(YearModel(id, year))
             }
         }
 

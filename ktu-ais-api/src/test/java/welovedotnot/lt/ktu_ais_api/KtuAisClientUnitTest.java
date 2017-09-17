@@ -3,12 +3,10 @@ package welovedotnot.lt.ktu_ais_api;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import welovedotnot.lt.ktu_ais_api.models.LoginModel;
+import welovedotnot.lt.ktu_ais_api.models.MarkModel;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -17,20 +15,25 @@ import welovedotnot.lt.ktu_ais_api.models.LoginModel;
  */
 public class KtuAisClientUnitTest {
 
+    private static final String USERNAME = "user";
+    private static final String PASSWORD = "pass";
+
     @Test
     public void loginTest() throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
-        KtuApiClient.INSTANCE.login("username", "password", new Function1<LoginModel, Unit>() {
-            @Override
-            public Unit invoke(LoginModel loginModel) {
-                Assert.assertNotNull(loginModel.getStudCookie());
-                Assert.assertNotNull(loginModel.getStudentId());
-                Assert.assertNotNull(loginModel.getStudentName());
-                Assert.assertNotNull(loginModel.getStudentSemesters());
-                latch.countDown();
-                return null;
-            }
-        });
-        latch.await(10, TimeUnit.SECONDS);
+        LoginModel loginModel = KtuApiClient.INSTANCE.login(USERNAME, PASSWORD);
+        Assert.assertNotNull(loginModel.getStudCookie());
+        Assert.assertNotNull(loginModel.getStudentId());
+        Assert.assertNotNull(loginModel.getStudentName());
+        Assert.assertNotNull(loginModel.getStudentSemesters());
     }
+
+    @Test
+    public void getGradesTest() throws Exception {
+        LoginModel loginModel = KtuApiClient.INSTANCE.login(USERNAME, PASSWORD);
+        List<MarkModel> grades = KtuApiClient.INSTANCE.getGrades(
+                loginModel,
+                loginModel.getStudentSemesters().get(1));
+        Assert.assertNotEquals(0, grades.size());
+    }
+
 }
