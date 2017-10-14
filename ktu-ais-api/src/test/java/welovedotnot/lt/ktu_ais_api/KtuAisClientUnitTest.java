@@ -31,8 +31,8 @@ public class KtuAisClientUnitTest {
     public void getGradesTest() throws Exception {
         LoginModel loginModel = KtuApiClient.INSTANCE.login(USERNAME, PASSWORD);
         List<MarkModel> grades = KtuApiClient.INSTANCE.getGrades(
-                loginModel,
-                loginModel.getStudentSemesters().get(1));
+                loginModel.getStudCookie(),
+                loginModel.getStudentSemesters().get(0));
         Assert.assertNotEquals(0, grades.size());
     }
 

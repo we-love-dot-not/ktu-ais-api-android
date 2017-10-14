@@ -2,7 +2,6 @@ package welovedotnot.lt.ktu_ais_api
 
 import welovedotnot.lt.ktu_ais_api.handlers.DataHandler
 import welovedotnot.lt.ktu_ais_api.handlers.LoginHandler
-import welovedotnot.lt.ktu_ais_api.models.LoginModel
 import welovedotnot.lt.ktu_ais_api.models.YearModel
 
 /**
@@ -11,9 +10,37 @@ import welovedotnot.lt.ktu_ais_api.models.YearModel
 
 object KtuApiClient {
 
+    /**
+     * Gets authentication cookies.
+     *
+     * @return Authentication creds and user info
+     */
     fun login(username: String, password: String)
             = LoginHandler().getAuthCookies(username, password)
 
-    fun getGrades(loginModel: LoginModel, yearModel: YearModel = loginModel.studentSemesters.first())
-            = DataHandler().getGrades(loginModel, yearModel)
+    /**
+     * Gets all marks for requested year.
+     * TODO Group marks by the week.
+     *
+     * @param studCookie response from loginModel used for authentication.
+     * @param yearModel from loginModel
+     *
+     *
+     * @return List marks
+     */
+    fun getGrades(studCookie: String, yearModel: YearModel)
+            = DataHandler().getGrades(studCookie, yearModel)
+
+    /**
+     * Gets all marks for requested year.
+     * TODO Group marks by the week.
+     *
+     * @param studCookie response from loginModel used for authentication.
+     * @param year year of marks
+     * @param yearId internal KTU year id.
+     *
+     * @return List marks
+     */
+    fun getGrades(studCookie: String, year: String, yearId: String)
+            = DataHandler().getGrades(studCookie, year, yearId)
 }

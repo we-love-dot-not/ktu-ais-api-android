@@ -3,7 +3,6 @@ package welovedotnot.lt.ktu_ais_api.handlers
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import welovedotnot.lt.ktu_ais_api.models.LoginModel
 import welovedotnot.lt.ktu_ais_api.models.MarkModel
 import welovedotnot.lt.ktu_ais_api.models.ModuleModel
 import welovedotnot.lt.ktu_ais_api.models.YearModel
@@ -14,16 +13,22 @@ import welovedotnot.lt.ktu_ais_api.models.YearModel
 
 class DataHandler {
 
-    fun getGrades(
-            loginModel: LoginModel,
-            planYear: YearModel)
-            = getGrades(loginModel.studCookie, planYear.year, planYear.id)
+    fun getGrades(studCookie: String, planYear: YearModel)
+            = getGrades(studCookie, planYear.year, planYear.id)
 
-    fun getModules(
-            studCookie: String,
-            planYear: String,
-            studId: String): List<ModuleModel> {
+    fun getGrades(studCookie: String, planYear: String, studId: String): List<MarkModel> {
+        val markList = mutableListOf<MarkModel>()
+        val moduleList = getModules(studCookie, planYear, studId)
 
+        moduleList.forEach { moduleModel ->
+            val moduleMarkList = getModuleMarkList(moduleModel, studCookie)
+            markList.addAll(moduleMarkList)
+        }
+
+        return markList
+    }
+
+    fun getModules(studCookie: String, planYear: String, studId: String): List<ModuleModel> {
         val url = "https://uais.cr.ktu.lt/ktuis/STUD_SS2.planas_busenos?" +
                 "plano_metai=$planYear&" +
                 "p_stud_id=$studId"
@@ -47,22 +52,6 @@ class DataHandler {
         }
 
         return moduleList
-    }
-
-    fun getGrades(
-            studCookie: String,
-            planYear: String,
-            studId: String): List<MarkModel> {
-
-        val markList = mutableListOf<MarkModel>()
-        val moduleList = getModules(studCookie, planYear, studId)
-
-        moduleList.forEach { moduleModel ->
-            val moduleMarkList = getModuleMarkList(moduleModel, studCookie)
-            markList.addAll(moduleMarkList)
-        }
-
-        return markList
     }
 
     private fun getModuleMarkList(moduleModel: ModuleModel, studCookie: String): List<MarkModel> {
