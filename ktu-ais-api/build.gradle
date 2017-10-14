@@ -1,6 +1,32 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+
+ext {
+    bintrayRepo = 'ktu_ais_api_android'
+    bintrayName = 'ktu-ais-api'
+
+    publishedGroupId = 'lt.welovedotnot'
+    libraryName = 'KTU AIS API'
+    artifact = 'ktu-ais-api'
+
+    libraryDescription = 'Scrapper based API for https://uais.cr.ktu.lt/ktuis'
+
+    siteUrl = 'https://github.com/nuuneoi/FBLikeAndroid'
+    gitUrl = 'https://github.com/nuuneoi/FBLikeAndroid.git'
+
+    libraryVersion = '0.0.1'
+
+    developerId = 'simonassank'
+    developerName = 'Simonas Sankauskas'
+    developerEmail = 'simonas.sank@gmail.com'
+
+    licenseName = 'MIT License'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT License"]
+}
+
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
@@ -33,6 +59,9 @@ dependencies {
     compile 'org.jetbrains.anko:anko:0.10.1'
     compile 'org.jsoup:jsoup:1.10.3'
 }
+
 repositories {
     mavenCentral()
 }
+
+apply from: 'gradle-jcenter-push.gradle'
