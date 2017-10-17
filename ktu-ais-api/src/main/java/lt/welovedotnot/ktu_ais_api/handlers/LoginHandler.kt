@@ -1,9 +1,9 @@
 package lt.welovedotnot.ktu_ais_api.handlers
 
-import org.jsoup.Connection
-import org.jsoup.Jsoup
 import lt.welovedotnot.ktu_ais_api.models.LoginModel
 import lt.welovedotnot.ktu_ais_api.models.YearModel
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 
 /**
  * Created by simonas on 9/3/17.
@@ -131,10 +131,21 @@ class LoginHandler: BaseHandler() {
             }
         }
 
+        val calUrl = "https://uais.cr.ktu.lt/ktuis/TV_STUD.stud_kal_w0"
+        val calRequest = Jsoup.connect(calUrl)
+                .cookie("STUDCOOKIE", authResponse.studCookie)
+                .method(Connection.Method.GET)
+                .execute()
+        calRequest.charset("windows-1257")
+        val calParse = calRequest.parse()
+        val currentWeekElement = calParse.select("#kal_div_id").select("option[selected]")[1]
+        val weekRegex = "(?:selected\\>)([0-9]*)".toRegex()
+        val currentWeek = weekRegex.find(currentWeekElement.toString())!!.groupValues[1]
         return LoginModel(
                 studCookie = authResponse.studCookie,
                 studentName =studentName,
                 studentId = studentId,
+                currentWeek = currentWeek,
                 studentSemesters = studyList
         )
     }
